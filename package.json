@@ -4,7 +4,8 @@
   "description": "Route caching for Express",
   "main": "index.js",
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "format": "prettier --write ."
   },
   "repository": {
     "type": "git",
