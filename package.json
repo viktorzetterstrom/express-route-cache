@@ -1,6 +1,6 @@
 {
   "name": "express-route-cache",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Route caching for Express",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
