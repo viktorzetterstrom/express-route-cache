@@ -4,4 +4,4 @@
 [![npm](https://img.shields.io/npm/v/express-route-cache)](https://github.com/viktorzetterstrom/express-route-cache)
 [![npm bundle size](https://img.shields.io/bundlephobia/min/express-route-cache?label=minified%20size)](https://github.com/viktorzetterstrom/express-route-cache)
 
-Express middleware that caches your routes.
+Express middleware that caches your routes. This project is under development and not ready for use.
