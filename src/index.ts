@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { InMemoryCache } from "./cache";
 
-class RouteCache {
+class ExpressRouteCache {
   private _cache = new InMemoryCache();
 
   cache() {
@@ -20,4 +20,4 @@ class RouteCache {
   }
 }
 
-export default RouteCache;
+export default ExpressRouteCache;
