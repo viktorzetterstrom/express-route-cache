@@ -14,12 +14,20 @@ export class InMemoryCache implements ICache {
     return this._cache.set<T>(key, value, ttl);
   }
 
+  public async has(key: string): Promise<boolean> {
+    return this._cache.has(key);
+  }
+
   public async del(key: string): Promise<boolean> {
     const deleted = this._cache.del(key);
     return deleted > 0;
   }
 
-  public async has(key: string): Promise<boolean> {
-    return this._cache.has(key);
+  public async flush(): Promise<void> {
+    return this._cache.flushAll();
+  }
+
+  public async keys(): Promise<string[]> {
+    return this._cache.keys();
   }
 }
