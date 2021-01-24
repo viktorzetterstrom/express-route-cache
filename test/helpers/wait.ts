@@ -1,4 +1,2 @@
-type mseconds = number;
-
-export const wait = (ms: mseconds) =>
+export const wait = (ms: number) =>
   new Promise<void>((resolve) => setTimeout(() => resolve(), ms));

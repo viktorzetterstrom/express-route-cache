@@ -63,7 +63,7 @@ describe("InMemoryCache", () => {
     const inMemoryCache = new InMemoryCache();
 
     await inMemoryCache.set(testKey1, testData1, shortTtl);
-    const waitingTimeMs = shortTtl * 1000 + 50;
+    const waitingTimeMs = shortTtl * 1000 + 10;
     await wait(waitingTimeMs);
 
     const exists = await inMemoryCache.has(testKey1);
