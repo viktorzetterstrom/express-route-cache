@@ -40,6 +40,28 @@ describe("InMemoryCache", () => {
     expect(exists).toEqual(true);
   });
 
+  it("can delete items from the cache", async () => {
+    const inMemoryCache = new InMemoryCache();
+
+    const success = await inMemoryCache.set(testKey, testData1, ttl);
+    expect(success).toBe(true);
+
+    const deleted = await inMemoryCache.del(testKey);
+    expect(deleted).toBe(true);
+
+    const exists = await inMemoryCache.has(testKey);
+    const data = await inMemoryCache.get(testKey);
+    expect(exists).toEqual(false);
+    expect(data).toBeUndefined();
+  });
+
+  it("returns false if item could not be deleted from the cache", async () => {
+    const inMemoryCache = new InMemoryCache();
+
+    const deleted = await inMemoryCache.del(testKey);
+    expect(deleted).toBe(false);
+  });
+
   it("removes items after ttl has expired", async () => {
     const inMemoryCache = new InMemoryCache();
 
