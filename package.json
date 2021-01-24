@@ -8,6 +8,7 @@
     "build": "tsc",
     "prepublishOnly": "npm run build",
     "test": "jest",
+    "test:watch": "jest --watch",
     "format": "prettier --write ."
   },
   "repository": {
