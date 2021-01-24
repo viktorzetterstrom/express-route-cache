@@ -1,6 +1,8 @@
 import NodeCache from "node-cache";
 import { ICache } from "./icache";
 
+type seconds = number;
+
 export class InMemoryCache implements ICache {
   private _cache = new NodeCache();
 
@@ -8,7 +10,7 @@ export class InMemoryCache implements ICache {
     return this._cache.get<T>(key);
   }
 
-  public async set<T>(key: string, value: T, ttl: number) {
+  public async set<T>(key: string, value: T, ttl: seconds) {
     return this._cache.set<T>(key, value, ttl);
   }
 
