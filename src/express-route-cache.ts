@@ -52,6 +52,10 @@ export class ExpressRouteCache {
     return this._cache.has(cacheKey);
   }
 
+  async del(cacheKey: string) {
+    return this._cache.del(cacheKey);
+  }
+
   async flush() {
     return this._cache.flush();
   }

@@ -68,4 +68,18 @@ describe("caching json responses", () => {
     expect(exists).toBe(true);
     expect(existsShortTtl).toBe(false);
   });
+
+  it("cached routes can be cleared using the del function", async () => {
+    await request(app).get(testPath);
+
+    expect(await erc.has(testPath)).toBe(true);
+    const deleted = await erc.del(testPath);
+    expect(deleted).toBe(true);
+    expect(await erc.has(testPath)).toBe(false);
+  });
+
+  it("returns false when trying to delete non-existing cacheKeys", async () => {
+    const deleted = await erc.del(testPath);
+    expect(deleted).toBe(false);
+  });
 });
