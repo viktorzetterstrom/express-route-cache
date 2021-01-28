@@ -51,6 +51,6 @@ class ExpressRouteCache {
   async del(cacheKey: string): Promise<Boolean>;
 
   // Use to flush entire cache
-  async flush(): Promise: void
+  async flush(): Promise<void>;
 }
 ```
