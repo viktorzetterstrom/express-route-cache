@@ -6,12 +6,12 @@ import { wait } from "./helpers";
 const app = express();
 const erc = new ExpressRouteCache();
 
-const testPath = "/json-test";
+const cachedPath = "/json-test";
 
 let hits = 0;
-app.get(testPath, erc.cache(), (req, res) => res.json({ hits: ++hits }));
+app.get(cachedPath, erc.cache(), (_, res) => res.send(`hits: ${++hits}`));
 
-describe("JSON", () => {
+describe("Send", () => {
   afterEach(() => {
     erc.flush();
     hits = 0;
@@ -19,18 +19,16 @@ describe("JSON", () => {
 
   it("sends response as expected on first query", async () => {
     await request(app)
-      .get(testPath)
-      .expect("Content-Type", /json/)
-      .then((res) => expect(res.body).toEqual({ hits: 1 }));
+      .get(cachedPath)
+      .then((res) => expect(res.text).toEqual("hits: 1"));
   });
 
   it("returns cached response after first requests", async () => {
-    await request(app).get(testPath);
-    await request(app).get(testPath);
+    await request(app).get(cachedPath);
+    await request(app).get(cachedPath);
 
     await request(app)
-      .get(testPath)
-      .expect("Content-Type", /json/)
-      .then((res) => expect(res.body).toEqual({ hits: 1 }));
+      .get(cachedPath)
+      .then((res) => expect(res.text).toEqual("hits: 1"));
   });
 });

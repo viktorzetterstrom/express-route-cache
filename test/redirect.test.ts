@@ -1,1 +1,4 @@
-// TODO: make sure redirects, status codes etc work
+describe("Redirect", () => {
+  it.todo("Handles 301 redirects");
+  it.todo("Handles 302 redirects");
+});

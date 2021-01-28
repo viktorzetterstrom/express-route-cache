@@ -5,12 +5,13 @@ declare global {
   namespace Express {
     export interface Response {
       _originalJson: Send;
+      _originalSend: Send;
     }
   }
 }
 
-interface CachedResponse {
-  sendFn: "json" | "send";
+interface CacheResponse {
+  json?: boolean;
   body: any;
 }
 
@@ -28,21 +29,31 @@ export class ExpressRouteCache {
     return async (req: Request, res: Response, next: NextFunction) => {
       const cacheKey = req.originalUrl;
 
-      const cachedResponse = await this._cache.get<CachedResponse>(cacheKey);
+      const cachedResponse = await this._cache.get<CacheResponse>(cacheKey);
       if (cachedResponse !== undefined) {
-        const { sendFn, body } = cachedResponse;
-        return res[sendFn](body);
+        if (cachedResponse.json) return res.json(cachedResponse.body);
+        return res.send(cachedResponse.body);
       }
 
+      res._originalSend = res.send;
       res._originalJson = res.json;
-      res.json = (body) => {
-        this._cache.set<CachedResponse>(
-          cacheKey,
-          { sendFn: "json", body },
-          ttlSeconds
-        );
-        return res._originalJson(body);
+
+      let wasCached = false;
+      const sender = ({ body, json }: CacheResponse) => {
+        if (res.statusCode < 400) {
+          this._cache.set<CacheResponse>(cacheKey, { body, json }, ttlSeconds);
+        }
+
+        wasCached = true;
+
+        if (json) return res._originalJson(body);
+        return res._originalSend(body);
       };
+
+      res.send = (body) =>
+        wasCached ? res._originalSend(body) : sender({ body });
+
+      res.json = (body) => sender({ body, json: true });
 
       next();
     };
