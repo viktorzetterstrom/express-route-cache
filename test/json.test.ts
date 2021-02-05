@@ -1,7 +1,6 @@
 import express from "express";
 import request from "supertest";
 import ExpressRouteCache from "../src";
-import { wait } from "./helpers";
 
 const app = express();
 const erc = new ExpressRouteCache();
