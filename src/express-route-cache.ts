@@ -88,5 +88,3 @@ export class ExpressRouteCache {
     return this.cacher.flush();
   }
 }
-
-export default ExpressRouteCache;
