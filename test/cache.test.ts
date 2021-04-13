@@ -11,7 +11,7 @@ const testPathWithQueryParams = "/json-test?with_query_params=true";
 const testPathWithShortTtl = "/json-test-short-ttl";
 
 let hits = 0;
-app.get(testPath, erc.cache(), (req, res) => res.send("Hello, World!"));
+app.get(testPath, erc.cache(5), (req, res) => res.send("Hello, World!"));
 
 const shortTtlSeconds = 0.01;
 app.get(testPathWithShortTtl, erc.cache(shortTtlSeconds), (_, res) =>

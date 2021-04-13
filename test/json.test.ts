@@ -8,7 +8,7 @@ const erc = new ExpressRouteCache();
 const testPath = "/json-test";
 
 let hits = 0;
-app.get(testPath, erc.cache(), (req, res) => res.json({ hits: ++hits }));
+app.get(testPath, erc.cache(5), (req, res) => res.json({ hits: ++hits }));
 
 describe("JSON", () => {
   afterEach(() => {
