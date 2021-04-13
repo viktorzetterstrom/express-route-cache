@@ -7,6 +7,10 @@
 
 Express middleware that caches your routes. This project is still under development and not stable, updates might contain breaking changes. Currently only works on methods `res.send` and `res.json`.
 
+## Todos
+- Queueing of requests
+- Better test coverage
+
 ## Installation
 
 - `npm install express-route-cache`
