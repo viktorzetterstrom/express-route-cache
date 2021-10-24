@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response, Send } from "express";
 import { ICache, InMemoryCache } from "./cache";
+import { RequestQueue } from "./request-queue";
 
 declare global {
   namespace Express {
@@ -15,36 +16,56 @@ interface CacheResponse {
   body: any;
 }
 
-export class ExpressRouteCache {
-  public static readonly DEFAULT_TTL_SECONDS = 60;
-  private _cache: ICache;
-  private _defaultTtlSeconds: number;
+interface ExpressRouteCacheConfig {
+  cache?: ICache;
+}
 
-  constructor(defaultTtlSeconds = ExpressRouteCache.DEFAULT_TTL_SECONDS) {
-    this._cache = new InMemoryCache();
-    this._defaultTtlSeconds = defaultTtlSeconds;
+let count = 0;
+
+export class ExpressRouteCache {
+  private cacher: ICache;
+  queue: RequestQueue;
+
+  constructor(config: ExpressRouteCacheConfig = {}) {
+    this.cacher = config.cache || new InMemoryCache();
+    this.queue = new RequestQueue();
   }
 
-  cache(ttlSeconds: number = this._defaultTtlSeconds) {
+  cache(ttlSeconds: number) {
     return async (req: Request, res: Response, next: NextFunction) => {
       const cacheKey = req.originalUrl;
 
-      const cachedResponse = await this._cache.get<CacheResponse>(cacheKey);
-      if (cachedResponse !== undefined) {
-        if (cachedResponse.json) return res.json(cachedResponse.body);
-        return res.send(cachedResponse.body);
+      const cacheResponse = await this.cacher.get<CacheResponse>(cacheKey);
+      if (cacheResponse !== undefined) {
+        if (cacheResponse.json) return res.json(cacheResponse.body);
+        return res.send(cacheResponse.body);
+      }
+
+      if (this.queue.has(cacheKey)) {
+        this.queue.add(cacheKey, async () => {
+          const cacheResponse = await this.cacher.get<CacheResponse>(cacheKey);
+          if (cacheResponse !== undefined) {
+            if (cacheResponse.json) return res.json(cacheResponse.body);
+            return res.send(cacheResponse.body);
+          }
+        });
+
+        return;
       }
 
       res._originalSend = res.send;
       res._originalJson = res.json;
 
+      if (!this.queue.has(cacheKey)) this.queue.init(cacheKey);
+
       let wasCached = false;
       const sender = ({ body, json }: CacheResponse) => {
         if (res.statusCode < 400) {
-          this._cache.set<CacheResponse>(cacheKey, { body, json }, ttlSeconds);
+          this.cacher.set<CacheResponse>(cacheKey, { body, json }, ttlSeconds);
         }
 
         wasCached = true;
+        this.queue.drain(cacheKey);
 
         if (json) return res._originalJson(body);
         return res._originalSend(body);
@@ -60,16 +81,14 @@ export class ExpressRouteCache {
   }
 
   async has(cacheKey: string) {
-    return this._cache.has(cacheKey);
+    return this.cacher.has(cacheKey);
   }
 
   async del(cacheKey: string) {
-    return this._cache.del(cacheKey);
+    return this.cacher.del(cacheKey);
   }
 
   async flush() {
-    return this._cache.flush();
+    return this.cacher.flush();
   }
 }
-
-export default ExpressRouteCache;

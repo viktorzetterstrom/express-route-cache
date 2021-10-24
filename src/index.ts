@@ -1,1 +1,3 @@
-export { default } from "./express-route-cache";
+import { ExpressRouteCache } from "./express-route-cache";
+
+export = ExpressRouteCache;
