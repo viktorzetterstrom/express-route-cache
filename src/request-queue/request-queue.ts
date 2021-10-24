@@ -1,14 +1,18 @@
 export class RequestQueue {
-  private queues: Record<string, (() => void)[]> = {};
+  private queues: Record<string, Array<() => void>> = {};
+
+  init(key: string) {
+    this.queues[key] = [];
+  }
 
   add(key: string, requestFunction: () => void) {
-    if (!this.queues[key]) return (this.queues[key] = [requestFunction]);
+    if (!this.queues[key]) this.init(key);
 
     this.queues[key].push(requestFunction);
   }
 
   has(key: string) {
-    return Boolean(this.queues[key]);
+    return this.queues[key] !== undefined;
   }
 
   drain(key: string) {

@@ -20,9 +20,11 @@ interface ExpressRouteCacheConfig {
   cache?: ICache;
 }
 
+let count = 0;
+
 export class ExpressRouteCache {
   private cacher: ICache;
-  private queue: RequestQueue;
+  queue: RequestQueue;
 
   constructor(config: ExpressRouteCacheConfig = {}) {
     this.cacher = config.cache || new InMemoryCache();
@@ -53,6 +55,8 @@ export class ExpressRouteCache {
 
       res._originalSend = res.send;
       res._originalJson = res.json;
+
+      if (!this.queue.has(cacheKey)) this.queue.init(cacheKey);
 
       let wasCached = false;
       const sender = ({ body, json }: CacheResponse) => {

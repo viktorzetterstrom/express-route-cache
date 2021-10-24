@@ -9,7 +9,7 @@
     "build": "bash scripts/build.sh",
     "prepublishOnly": "npm run build",
     "test": "jest",
-    "test:watch": "jest --watch",
+    "test:watch": "jest --watch --verbose",
     "format": "prettier --write ."
   },
   "repository": {
