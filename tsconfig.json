@@ -10,5 +10,5 @@
     "forceConsistentCasingInFileNames": true,
     "emitDeclarationOnly": true
   },
-  "exclude": ["src/cache/__test__", "test"]
+  "exclude": ["src/cache/__test__", "test", "./dist/**/*"]
 }
